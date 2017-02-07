@@ -22,7 +22,6 @@ public class CameraController : MonoBehaviour {
         if (cameras.Length > 0)
         {
             cameras[0].gameObject.SetActive(true);
-            Debug.Log("Camera with name: " + cameras[0].GetComponent<Camera>().name + ", is now enabled");
         }
     }
 
@@ -35,19 +34,16 @@ public class CameraController : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.C))
         {
             currentCameraIndex++;
-            Debug.Log("C button has been pressed. Switching to the next camera");
             if (currentCameraIndex < cameras.Length)
             {
                 cameras[currentCameraIndex - 1].gameObject.SetActive(false);
                 cameras[currentCameraIndex].gameObject.SetActive(true);
-                Debug.Log("Camera with name: " + cameras[currentCameraIndex].GetComponent<Camera>().name + ", is now enabled");
             }
             else
             {
                 cameras[currentCameraIndex - 1].gameObject.SetActive(false);
                 currentCameraIndex = 0;
                 cameras[currentCameraIndex].gameObject.SetActive(true);
-                Debug.Log("Camera with name: " + cameras[currentCameraIndex].GetComponent<Camera>().name + ", is now enabled");
             }
         }
     }

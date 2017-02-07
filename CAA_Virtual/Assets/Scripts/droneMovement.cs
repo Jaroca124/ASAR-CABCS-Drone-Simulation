@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class movement : MonoBehaviour {
+public class droneMovement : MonoBehaviour {
 
     //float speed = 10.0f;
     //public float thrust;
