@@ -48,6 +48,7 @@
   <ItemGroup>
      <Compile Include="Assets\Scripts\Autonomy_Algorithm.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
+     <Compile Include="Assets\Scripts\DisplayScript.cs" />
      <Compile Include="Assets\Scripts\droneMovement.cs" />
      <Compile Include="Assets\Scripts\serialRead.cs" />
  <Reference Include="UnityEngine.UI">
