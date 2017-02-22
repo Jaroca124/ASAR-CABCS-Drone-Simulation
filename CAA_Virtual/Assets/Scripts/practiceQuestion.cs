@@ -1,10 +1,22 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Collections;
+using UnityEngine.UI;
 
-public class practiceQuestion : MonoBehaviour {
+// In this example we show how to invoke a coroutine and continue executing
+// the function in parallel.
 
-    public GameObject sound;
+public class practiceQuestion : MonoBehaviour
+{
+
+    // In this example we show how to invoke a coroutine and 
+    // continue executing the function in parallel.
+
+    // Variables
+
+    public GameObject displayInstructionsSound;
+    public GameObject test;
+    public Text answer;
+
     private AudioSource toPlay;
 
     // Practice Question Code
@@ -14,29 +26,38 @@ public class practiceQuestion : MonoBehaviour {
                 "Report the sum of the Z coordinates of all active drones."};
     int[] prac_answers = new int[3] { 10, 70, 60 };
 
-    // Use this for initialization
-    void Start () {
-        print("start");
-        runPractice();
-    }
-	
-	// Update is called once per frame
-	void Update () {
+
+    private IEnumerator coroutine;
+
+    void Start()
+    {
+        // - After 0 seconds, prints "Starting 0.0"
+        // - After 0 seconds, prints "Before WaitAndPrint Finishes 0.0"
+        // - After 2 seconds, prints "WaitAndPrint 2.0"
+        print("Starting " + Time.time);
+
+        // Start function WaitAndPrint as a coroutine.
+
+        //coroutine = playInstruction();
+        //StartCoroutine(coroutine);
         
     }
 
-    IEnumerator runPractice() {
-
-        print("HelloWorld");
-        toPlay = sound.GetComponent<AudioSource>();
-
-        while (prac_num < 3)
-        {
-            toPlay.Play();
-            yield return new WaitForSeconds(37);
-            print("Test");
-
-            prac_num++;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return)) {
+            print(answer.text.ToString());
         }
+    }
+
+    private IEnumerator playInstruction()
+    {
+        toPlay = displayInstructionsSound.GetComponent<AudioSource>();
+        toPlay.Play();
+        yield return new WaitForSeconds(toPlay.clip.length);
+
+        toPlay = test.GetComponent<AudioSource>();
+        toPlay.Play();
+
     }
 }
