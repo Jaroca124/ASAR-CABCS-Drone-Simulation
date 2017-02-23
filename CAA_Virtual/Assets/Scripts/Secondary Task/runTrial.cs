@@ -45,27 +45,79 @@ public class runTrial : MonoBehaviour
 
     void Start()
     {
+        // Begin Trial
+        trialFunction();
+    }
+
+    public void trialFunction() {
 
         print("Starting " + Time.time);
 
+        // Initialize Audio
+        //AudioSource correctClip = correctAudio.GetComponent<AudioSource>();
+        //AudioSource incorrectClip = incorrectAudio.GetComponent<AudioSource>();
+        //AudioSource[] questionAudioArray = new AudioSource[3] { question1.GetComponent<AudioSource>(), question2.GetComponent<AudioSource>(), question3.GetComponent<AudioSource>() };
+
+        Debug.Log("Starting Coroutine");
+        Debug.Log("Trial #: " + current_q);
+        Debug.Log("Total Q: " + total_questions);
+        while (current_q < total_questions)
+        {
+            Debug.Log("Starting Trial");
+            // Grab Trial Variables
+            int q_answer = prac_answers[current_q];
+            Debug.Log("Trial Answer: " + q_answer);
+
+            // Display Question
+            // TODO
+
+            // Play Question
+            //questionAudioArray[current_q].Play();
+            //float start_time = Time.time;
+            //while (start_time + questionAudioArray[current_q].clip.length + Time.time < Time.time)
+            //{
+            //    Debug.Log("Waiting");
+            //}
+
+            // Check Participant's Answer
+            while (!CORRECT)
+            {
+                if (RESPONSE == prac_answers[current_q].ToString())
+                {
+                    CORRECT = true;
+                    Debug.Log("Correct");
+                    //correctClip.Play();
+                }
+                else
+                {
+                    Debug.Log("INCORRECT");
+                    //incorrectClip.Play();
+                }
+            }
+
+            current_q++;
+        }
+        Debug.Log("Done");
+
         //Start Coroutine
-        coroutine = playInstruction();
-        StartCoroutine(coroutine);
+        //coroutine = playInstruction();
+        //StartCoroutine(coroutine);
 
     }
 
     void Update()
     {
-        RESPONSE = GameObject.Find("InputField").GetComponent<userInput>().UserResponse;
+        // Can now access the variable, but the program crashes when i run it. I need to figure out how to access the response variable continuously // maybe search (wait until variable is correct unity?
+        RESPONSE = GameObject.Find("InputField").GetComponentInChildren<InputField>().text.ToString();
     }
 
+    /*
     private IEnumerator playInstruction()
     {
         // Initialize Audio
         AudioSource correctClip = correctAudio.GetComponent<AudioSource>();
         AudioSource incorrectClip = incorrectAudio.GetComponent<AudioSource>();
         AudioSource[] questionAudioArray = new AudioSource[3] { question1.GetComponent<AudioSource>(), question2.GetComponent<AudioSource>(), question3.GetComponent<AudioSource>() };
-        correctClip.Play();
 
         Debug.Log("Starting Coroutine");
         Debug.Log("Trial #: " + current_q);
@@ -103,5 +155,5 @@ public class runTrial : MonoBehaviour
             current_q++;
         }
         Debug.Log("Done");
-    }
+    }*/
 }

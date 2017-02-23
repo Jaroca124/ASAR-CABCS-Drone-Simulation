@@ -16,6 +16,7 @@ public class userInput : MonoBehaviour {
     public void GetInput(string user_input)
     {
         UserResponse = user_input;
+        Debug.Log(UserResponse);
         input.text = "";
     }
 	
