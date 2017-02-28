@@ -38,18 +38,33 @@ public class runTrial : MonoBehaviour
     int current_q = 0;
     bool CORRECT;
 
+    // Declare Coroutine
     private IEnumerator coroutine;
 
-    // TAKE OUT
+    // Declare Response Variables
     string RESPONSE;
+    public Image cSymbol;
+    public Image iSymbol;
 
     void Start()
     {
+        cSymbol.enabled = false;
+        iSymbol.enabled = false;
+        StartCoroutine("trialFunction");
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            cSymbol.enabled = true;
+            Debug.Log("Checking Answer");
+            RESPONSE = GameObject.Find("InputField").GetComponent<userInput>().UserResponse.ToString(); //Figure out why the response is empty
+            checkAnswer();
+        }
     }
 
     public IEnumerator trialFunction() {
-
-        //print("Starting " + Time.time);
 
         // Initialize Audio
         AudioSource correctClip = correctAudio.GetComponent<AudioSource>();
@@ -77,26 +92,34 @@ public class runTrial : MonoBehaviour
             // Check Participant's Answer
             while (!CORRECT)
             {
-                RESPONSE = GameObject.Find("InputField").GetComponentInChildren<InputField>().text.ToString();
-                if (RESPONSE == prac_answers[current_q].ToString())
-                {
-                    CORRECT = true;
-                    correctClip.Play();
-                    Debug.Log("Success MOFO");
-                }
-                else
-                {
-                    incorrectClip.Play();
-                }
+                Debug.Log("Waiting");
+                //checkAnswer();
                 yield return null;
             }
+            
+            // Next Question
             current_q++;
         }
         Debug.Log("Done");
     }
 
-    void Update()
+    void checkAnswer()
     {
-        StartCoroutine("trialFunction");
+        cSymbol.enabled = false;
+        iSymbol.enabled = false;
+        Debug.Log("In Checked: " + RESPONSE);
+        if (RESPONSE == prac_answers[current_q].ToString())
+        {
+            CORRECT = true;
+            iSymbol.enabled = false;
+            cSymbol.enabled = true;
+            Debug.Log("Success MOFO");
+        }
+        else
+        {
+            Debug.Log("Incorrect");
+            cSymbol.enabled = false;
+            iSymbol.enabled = true;
+        }
     }
 }
