@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/practiceQuestion.unity
+- path: Assets/Scenes/simulation.unity
   isLoaded: 1
   isActive: 1

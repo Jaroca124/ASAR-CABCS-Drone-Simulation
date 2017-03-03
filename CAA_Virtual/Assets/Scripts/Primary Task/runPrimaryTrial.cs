@@ -4,20 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class runTrial : MonoBehaviour
+public class runPrimaryTrial : MonoBehaviour
 {
-
-    // In this example we show how to invoke a coroutine and 
-    // continue executing the function in parallel.
-
-    // Variables
-
-    public GameObject displayInstructionsSound;
-
     // Audio - Dispatch Response
     public GameObject alertAudio;
     public GameObject correctAudio;
     public GameObject incorrectAudio;
+    public GameObject displayInstructionsSound;
 
     // Audio - Questions
     public GameObject question1;
@@ -48,8 +41,8 @@ public class runTrial : MonoBehaviour
     public Image cSymbol;
     public Image iSymbol;
 
-    // Define Waiting Variable
-    int WAITING = 5;
+    // Declare ACtivation Variable
+    bool TRIGGER = false;
 
     void Start()
     {
@@ -84,7 +77,12 @@ public class runTrial : MonoBehaviour
             GameObject.Find("instructionText").GetComponent<Text>().text = "";
 
             // Wait for Timer
-            yield return new WaitForSeconds(WAITING);
+            while (!TRIGGER)
+            {
+                Debug.Log("Waiting for Trigger");
+                yield return null;
+                TRIGGER = false;
+            }
 
             //Play Alert Noise
             alertAudio.GetComponent<AudioSource>().Play();
