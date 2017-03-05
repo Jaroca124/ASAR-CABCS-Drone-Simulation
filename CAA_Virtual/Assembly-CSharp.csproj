@@ -47,9 +47,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\Autonomy_Algorithm.cs" />
+     <Compile Include="Assets\Scripts\Break\waitScript.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\DisplayScript.cs" />
      <Compile Include="Assets\Scripts\Menu\LoadSceneOnClick.cs" />
+     <Compile Include="Assets\Scripts\Menu\setPlayerPrefs.cs" />
      <Compile Include="Assets\Scripts\Primary Task\runPrimaryTrial.cs" />
      <Compile Include="Assets\Scripts\Secondary Task\runTrial.cs" />
      <Compile Include="Assets\Scripts\Secondary Task\userInput.cs" />
