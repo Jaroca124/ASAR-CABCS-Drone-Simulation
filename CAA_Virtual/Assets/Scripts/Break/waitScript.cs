@@ -7,7 +7,6 @@ public class waitScript : MonoBehaviour {
 
     // Use this for initialization
     void Start() {
-        //Button contButton = GameObject.Find("Button");
         StartCoroutine("wait");
 
     }
@@ -17,7 +16,8 @@ public class waitScript : MonoBehaviour {
 	}
 
     IEnumerator wait() {
-        yield return new WaitForSeconds(300);
-        
+        yield return new WaitForSeconds(5); //Make 300 for Real
+        GameObject proceedButton = GameObject.Find("Proceed");
+        proceedButton.GetComponent<Button>().interactable = true;
     }
 }

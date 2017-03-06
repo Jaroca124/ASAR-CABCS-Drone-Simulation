@@ -51,7 +51,7 @@ public class runPrimaryTrial : MonoBehaviour
     int question_index = 1;
 
     // Create Current Trial Number Variable
-    int trial_number = PlayerPrefs.GetInt("trial_number");
+    int trial_number;
 
     static int total_questions = 3;
     int current_q = 0;
@@ -94,6 +94,7 @@ public class runPrimaryTrial : MonoBehaviour
     {
         cSymbol.enabled = false;
         iSymbol.enabled = false;
+        trial_number = PlayerPrefs.GetInt("trial_number");
         StartCoroutine("trialFunction");
     }
 
