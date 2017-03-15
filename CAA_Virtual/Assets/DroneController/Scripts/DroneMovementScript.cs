@@ -32,10 +32,12 @@ public class DroneMovementScript: MonoBehaviour{
 		velocity = ourDrone.velocity.magnitude;		
 		ClampingSpeedValues();
 		MovementUpDown();
-		MovementLeftRight();
-		Rotation();
 		MovementForward();
 		DroneSound();
+
+        //Create Function to Keep Drone Centered
+        PositionCheck();
+        
 
 		if(joystick_turned_on == false){
 			Input_Mobile_Sensitvity_Calculation();
@@ -52,15 +54,26 @@ public class DroneMovementScript: MonoBehaviour{
 
 		ourDrone.AddRelativeForce(Vector3.up * upForce);
 
+        //Rotate the Drone on Start
 		ourDrone.rotation = Quaternion.Euler(
-			new Vector3(0, currentYRotation, 0)
+			new Vector3(0, 90, 0)
 			);
 
 		
 		droneObject.rotation = Quaternion.Euler(
-			new Vector3(tiltAmountForward, currentYRotation, tiltAmountSideways)
+			new Vector3(tiltAmountForward, 90, tiltAmountSideways)
 		);
 	}
+
+    void PositionCheck()
+    {
+        Debug.Log("here");
+        // Starting Position: 153.5
+        if (ourDrone.transform.position.z > 155 || ourDrone.transform.position.z < 153.4)
+        {
+            ourDrone.AddRelativeForce((200.0f * -1.0f * (Mathf.Sign(153.5f - (ourDrone.transform.position.z)))), 0,0);
+        }
+    }
 
 	void RotationUpdateLoop_TrickRotation(){
 		if(Input.GetKeyDown(KeyCode.U)){
@@ -129,7 +142,7 @@ public class DroneMovementScript: MonoBehaviour{
 	[Header("MAX SPEEDS")]
 	public int maxForwardSpeed = 10;
 	public int maxSidewaySpeed = 5;
-	[Header("Drone slowdown")]
+    [Header("Drone slowdown")]
 	[Range(0.0f,2.0f)]
 	public float slowDownTime = 0.95f;
 	private void ClampingSpeedValues(){
@@ -230,6 +243,7 @@ public class DroneMovementScript: MonoBehaviour{
 
 	private float tiltAmountSideways = 0;
 	private float tiltVelocitySideways;
+    /*
 	private void MovementLeftRight(){
 		if(A){
 			ourDrone.AddRelativeForce(Vector3.right * Horizontal_A * sideMovementAmount);
@@ -242,7 +256,7 @@ public class DroneMovementScript: MonoBehaviour{
 		if(!A && !D){
 			tiltAmountSideways = Mathf.SmoothDamp(tiltAmountSideways, 0, ref tiltVelocitySideways, tiltNoMovementSpeed);
 		}
-		/*
+		// COMMENT
 		if(Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f ){
 			ourDrone.AddRelativeForce(Vector3.right * Input.GetAxis("Horizontal") * sideMovementAmount);
 			tiltAmountSideways = Mathf.SmoothDamp(tiltAmountSideways,-20 * Input.GetAxis("Horizontal"), ref tiltVelocitySideways, 0.1f);
@@ -250,33 +264,15 @@ public class DroneMovementScript: MonoBehaviour{
 		else{
 			tiltAmountSideways = Mathf.SmoothDamp(tiltAmountSideways, 0, ref tiltVelocitySideways, 0.1f);
 		}
-		*/
+		// COMMENT
 	}
+*/
 
 	private float wantedYRotation;
 	[HideInInspector]public float currentYRotation;
 	[Header("Rotation Amount Mulitplier")]
 	public float rotationAmount = 2.5f;
 	private float rotationYVelocity;
-	private void Rotation(){
-		if(joystick_turned_on == false){
-			if(J){
-				//if(Input.GetKey(KeyCode.J)){
-				wantedYRotation -= rotationAmount;
-			}
-			if(L){	
-				//if(Input.GetKey(KeyCode.L)){
-				wantedYRotation += rotationAmount;
-			}
-		}
-		else{
-			wantedYRotation += rotationAmount * Input.GetAxis(right_analog_x);
-		}
-
-	
-
-		currentYRotation = Mathf.SmoothDamp(currentYRotation, wantedYRotation, ref rotationYVelocity, 0.25f);
-	}
 
 
 	private float tiltAmountForward = 0;
