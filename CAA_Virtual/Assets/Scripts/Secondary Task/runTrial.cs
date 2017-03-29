@@ -33,7 +33,7 @@ public class runTrial : MonoBehaviour
                 "Report the sum of the Z coordinates of all active drones."};
 
     // Practice Question Answers
-    static int[] prac_answers = new int[3] { 36, 59, 60 };
+    static int[] prac_answers = new int[3] {10, 70, 60};
 
     // Trial Variables
     static int total_questions = 3;
@@ -63,7 +63,7 @@ public class runTrial : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             RESPONSE = GameObject.Find("GameController").GetComponent<userInput>().UserResponse.ToString();
-            Debug.Log("Checking Answer: " + RESPONSE);
+            //Debug.Log("Checking Answer: " + RESPONSE);
             checkAnswer();
         }
     }
@@ -74,8 +74,8 @@ public class runTrial : MonoBehaviour
         AudioSource[] questionAudioArray = new AudioSource[3] { question1.GetComponent<AudioSource>(), question2.GetComponent<AudioSource>(), question3.GetComponent<AudioSource>() };
 
         // Trial Information
-        Debug.Log("Trial #: " + current_q);
-        Debug.Log("Total Q: " + total_questions);
+        //Debug.Log("Trial #: " + current_q);
+        //Debug.Log("Total Q: " + total_questions);
         while (current_q < total_questions)
         {
             // Reset Variables
@@ -89,9 +89,9 @@ public class runTrial : MonoBehaviour
             //Play Alert Noise
             alertAudio.GetComponent<AudioSource>().Play();
 
-            Debug.Log("Starting Trial");
+            //Debug.Log("Starting Trial");
             // Grab Trial Variables
-            Debug.Log("Trial Answer: " + prac_answers[current_q]);
+            //Debug.Log("Trial Answer: " + prac_answers[current_q]);
 
             // Display Question
             GameObject.Find("instructionText").GetComponent<Text>().text = prac_questions[current_q];
@@ -105,7 +105,7 @@ public class runTrial : MonoBehaviour
             // Check Participant's Answer
             while (!CORRECT)
             {
-                Debug.Log("Waiting");
+                //Debug.Log("Waiting");
                 yield return null;
             }
             
@@ -113,8 +113,8 @@ public class runTrial : MonoBehaviour
             current_q++;
         }
 
-        // Return to Menu
-        SceneManager.LoadScene(0);
+        // Display Text
+        GameObject.Find("guiBackground").SetActive(false);
     }
 
     void checkAnswer()
@@ -125,7 +125,7 @@ public class runTrial : MonoBehaviour
 
         cSymbol.enabled = false;
         iSymbol.enabled = false;
-        Debug.Log("In Checked: " + RESPONSE);
+        //Debug.Log("In Checked: " + RESPONSE);
         if (RESPONSE == prac_answers[current_q].ToString())
         {
             CORRECT = true;

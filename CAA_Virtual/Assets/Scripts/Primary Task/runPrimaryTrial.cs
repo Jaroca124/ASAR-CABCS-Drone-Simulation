@@ -25,9 +25,6 @@ public class runPrimaryTrial : MonoBehaviour
     string[] launch_text = new string[2] {"Preparing Launch... Running Final Scans...",
                "Liftoff in..."};
 
-    //Participant Data
-    static int SUBID = 0;
-
     //Answers
     int[] q_answer_array = new int[6] { 36, 59, 42, 92, 165, 131 };
 
@@ -43,10 +40,6 @@ public class runPrimaryTrial : MonoBehaviour
         new int[] { 2, 4, 6, 1, 3, 5 },
     };
 
-    // Assign Trial Question Order
-    int counterb_index = (SUBID % 8) + 1;
-    int[] question_array = new int[6] { counterbalance_qarray[SUBID][0], counterbalance_qarray[SUBID][1], counterbalance_qarray[SUBID][2], counterbalance_qarray[SUBID][3], counterbalance_qarray[SUBID][4], counterbalance_qarray[SUBID][5] };
-
     // Create Variable for Keeping Track of Distraction Index Across Trials
     int question_index = 1;
 
@@ -59,8 +52,8 @@ public class runPrimaryTrial : MonoBehaviour
     bool CORRECT;
 
     // Create Timing Variables;
-    float trialOneTime = 0;
-    float trialTwoTime = 0;
+    float trialStartTime;
+    float trialTime;
     float[] question_time = new float[6];
 
     ///////////////////////////////////////////////////
@@ -87,6 +80,16 @@ public class runPrimaryTrial : MonoBehaviour
     public Image cSymbol;
     public Image iSymbol;
 
+    // Declare Subid
+    static int SUBID;
+
+    // Declare Trigger Times
+    // Based on Total Distance Travelled
+    float[] triggerTimes = new float[6] { 10, 60, 80, 30, 90, 110};
+    float distanceTotal = 0;
+    float xPos;
+    bool activated = false;
+
     // Declare Activation Variable
     bool TRIGGER = false;
 
@@ -96,14 +99,39 @@ public class runPrimaryTrial : MonoBehaviour
         iSymbol.enabled = false;
         trial_number = PlayerPrefs.GetInt("trial_number");
         StartCoroutine("trialFunction");
+
+        SUBID = PlayerPrefs.GetInt("subid");
+        Debug.Log("SUBID: " + SUBID);
+
+        xPos = GameObject.Find("Drone_red").transform.position.x;
+
+        // Assign Trial Question Order
+        int counterb_index = (SUBID % 8) + 1;
+        int[] question_array = new int[6] { counterbalance_qarray[counterb_index][0], counterbalance_qarray[counterb_index][1], counterbalance_qarray[counterb_index][2], counterbalance_qarray[counterb_index][3], counterbalance_qarray[counterb_index][4], counterbalance_qarray[counterb_index][5] };
+        trialStartTime = Time.time;
     }
 
     void Update()
     {
+        if (!CORRECT)
+        {
+            distanceTotal += Mathf.Abs(GameObject.Find("Drone_red").transform.position.x - xPos);
+        }
+        if (!activated)
+        {
+            if (distanceTotal >= triggerTimes[current_q])
+            {
+                //Debug.Log("ACTIVATED");
+                TRIGGER = true;
+                activated = true;
+            }
+        }
+        xPos = GameObject.Find("Drone_red").transform.position.x;
+
         if (Input.GetKeyDown(KeyCode.Return))
         {
             RESPONSE = GameObject.Find("GameController").GetComponent<userInput>().UserResponse.ToString();
-            Debug.Log("Checking Answer: " + RESPONSE);
+            //Debug.Log("Checking Answer: " + RESPONSE);
             checkAnswer();
         }
     }
@@ -114,8 +142,8 @@ public class runPrimaryTrial : MonoBehaviour
         //AudioSource[] questionAudioArray = new AudioSource[3] { question1.GetComponent<AudioSource>(), question2.GetComponent<AudioSource>(), question3.GetComponent<AudioSource>() };
 
         // Trial Information
-        Debug.Log("Trial #: " + current_q);
-        Debug.Log("Total Q: " + total_questions);
+        //Debug.Log("Trial #: " + current_q);
+        //Debug.Log("Total Q: " + total_questions);
         while (current_q < total_questions)
         {
             if (trial_number == 2)
@@ -131,20 +159,18 @@ public class runPrimaryTrial : MonoBehaviour
             CORRECT = false;
             GameObject.Find("instructionText").GetComponent<Text>().text = "";
 
-            // Wait for Timer
+            // Wait for Trigger
             while (!TRIGGER)
             {
-                Debug.Log("Waiting for Trigger");
                 yield return null;
-                TRIGGER = false;
             }
 
             //Play Alert Noise
             alertAudio.GetComponent<AudioSource>().Play();
 
-            Debug.Log("Starting Trial");
+            //Debug.Log("Starting Trial");
             // Grab Trial Variables
-            Debug.Log("Trial Answer: " + q_answer_array[index]);
+            //Debug.Log("Trial Answer: " + q_answer_array[index]);
 
             // Display Question
             GameObject.Find("instructionText").GetComponent<Text>().text = q_text_array[index];
@@ -153,36 +179,50 @@ public class runPrimaryTrial : MonoBehaviour
             //questionAudioArray[current_q].Play();
 
             //Initialize Response Start
-            float start_time = Time.time;
+            float qstart_time = Time.time;
 
             // Check Participant's Answer
             while (!CORRECT)
             {
-                Debug.Log("Waiting");
+                //Debug.Log("Waiting");
                 yield return null;
+                TRIGGER = false;
             }
+
+            // Log Question Time of Completion
+            question_time[current_q] = Time.time - qstart_time;
             
             // Next Question
             current_q++;
+            activated = false;
         }
+
+        // Calculate Trial Time
+        trialTime = Time.time - trialStartTime;
 
         // Transition: Second Trial or End
         if (trial_number == 1)
         {
+            // Print Data to Console
+            //Debug.Log("Total Trial Time: " + trialTime);
+            //Debug.Log("Question 1 Time: " + question_time[0]);
+            //Debug.Log("Question 2 Time: " + question_time[1]);
+            //Debug.Log("Question 3 Time: " + question_time[2]);
+
             int temp_trial = PlayerPrefs.GetInt("trial_number");
             PlayerPrefs.SetInt("temp_trial", temp_trial + 1); //Increment Trial Number
-            // Load Break Scene
+            SceneManager.LoadScene(3);
         }
         else if (trial_number == 2)
         {
-            // Log Data?
+            // LOG DATA
             int temp_subid = PlayerPrefs.GetInt("subid");
             PlayerPrefs.SetInt("subid", temp_subid + 1); //Increment Subid
             SceneManager.LoadScene(0);
         }
         else
         {
-            Debug.Log("Error");
+            //Debug.Log("Error");
         }
     }
 
@@ -194,7 +234,7 @@ public class runPrimaryTrial : MonoBehaviour
 
         cSymbol.enabled = false;
         iSymbol.enabled = false;
-        Debug.Log("In Checked: " + RESPONSE);
+        //Debug.Log("In Checked: " + RESPONSE);
         if (RESPONSE == q_answer_array[index].ToString())
         {
             CORRECT = true;

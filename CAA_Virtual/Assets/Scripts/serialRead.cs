@@ -12,7 +12,7 @@ public class serialRead : MonoBehaviour {
     void Start () {
         stream.Open(); //Open the Serial Stream.
         stream.ReadTimeout = 1;
-        print("started");
+        //print("started");
     }
 	
 	// Update is called once per frame
@@ -30,7 +30,7 @@ public class serialRead : MonoBehaviour {
         }
         else
         {
-            print("Serial Port Not Open");
+            //print("Serial Port Not Open");
         }
     }
 

@@ -14,9 +14,4 @@ public class DisplayScript : MonoBehaviour
         if (Display.displays.Length > 2)
             Display.displays[2].Activate();
     }
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
 }

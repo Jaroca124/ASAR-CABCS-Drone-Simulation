@@ -67,11 +67,10 @@ public class DroneMovementScript: MonoBehaviour{
 
     void PositionCheck()
     {
-        Debug.Log("here");
         // Starting Position: 153.5
         if (ourDrone.transform.position.z > 155 || ourDrone.transform.position.z < 153.4)
         {
-            ourDrone.AddRelativeForce((200.0f * -1.0f * (Mathf.Sign(153.5f - (ourDrone.transform.position.z)))), 0,0);
+            ourDrone.AddRelativeForce((300.0f * -1.0f * (Mathf.Sign(153.5f - (ourDrone.transform.position.z)))), 0,0);
         }
     }
 
