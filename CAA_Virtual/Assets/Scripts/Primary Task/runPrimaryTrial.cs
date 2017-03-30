@@ -131,7 +131,7 @@ public class runPrimaryTrial : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Return))
         {
             RESPONSE = GameObject.Find("GameController").GetComponent<userInput>().UserResponse.ToString();
-            //Debug.Log("Checking Answer: " + RESPONSE);
+            Debug.Log("Checking Answer: " + RESPONSE);
             checkAnswer();
         }
     }
