@@ -5,18 +5,53 @@ using UnityEngine.UI;
 
 public class changeTarget : MonoBehaviour {
 
-    public Sprite[] orderA; //= new Sprite[6] { block3, block1, block2, block4, block5, finish };
-    public Sprite[] orderB; //= new Sprite[6] { block5, block3, block4, block1, block2, finish };
+    public Sprite[] orderA;
+    public Sprite[] orderB;
+
+    public Text condition;
 
     Image target;
-
     int targetNum = 0;
+    int order;
+    int trial;
 
     // Use this for initialization
     void Start()
     {
         target = this.GetComponent<Image>();
-        target.sprite = orderA[targetNum];
+        order = PlayerPrefs.GetInt("Order");
+        trial = PlayerPrefs.GetInt("Trial");
+        Debug.Log("Order: " + order);
+        Debug.Log("Trial: " + trial);
+
+        // Set Starting Target
+        if (trial == 1)
+        {
+            if (order % 2 == 0)
+                target.sprite = orderA[0];
+            else
+                target.sprite = orderB[0];
+        }
+        if (trial == 2)
+        {
+            if (order % 2 == 0)
+                target.sprite = orderB[0];
+            else
+                target.sprite = orderA[0];
+        }
+
+        GameObject GameController = GameObject.Find("GameController");
+        runPrimaryTrial primaryScript = GameController.GetComponent<runPrimaryTrial>();
+        if (primaryScript.continuous)
+        {
+            condition.text = "Continuous";
+        }
+        else
+        {
+            condition.text = "Discrete";
+        }
+        targetNum++;
+
     }
 
     // Update is called once per frame
@@ -28,7 +63,18 @@ public class changeTarget : MonoBehaviour {
         {
             if (targetNum < 6)
             {
-                target.sprite = orderA[targetNum];
+                if (trial == 1) {
+                    if (order % 2 == 0)
+                        target.sprite = orderA[targetNum];
+                    else
+                        target.sprite = orderB[targetNum];
+                }
+                if (trial == 2) {
+                    if (order % 2 == 0)
+                        target.sprite = orderB[targetNum];
+                    else
+                        target.sprite = orderA[targetNum];
+                }
                 targetNum++;
             }
         }
