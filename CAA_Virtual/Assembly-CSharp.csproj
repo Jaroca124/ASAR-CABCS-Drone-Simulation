@@ -96,6 +96,7 @@
      <Compile Include="Assets\Scripts\Load.cs" />
      <Compile Include="Assets\Scripts\Menu\LoadSceneOnClick.cs" />
      <Compile Include="Assets\Scripts\Menu\setPlayerPrefs.cs" />
+     <Compile Include="Assets\Scripts\Primary Task\changeTarget.cs" />
      <Compile Include="Assets\Scripts\Primary Task\runPrimaryTrial.cs" />
      <Compile Include="Assets\Scripts\Secondary Task\runTrial.cs" />
      <Compile Include="Assets\Scripts\Secondary Task\userInput.cs" />
