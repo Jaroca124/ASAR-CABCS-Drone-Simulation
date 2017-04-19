@@ -2,48 +2,55 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Ports;
+using System;
 
 public class serialRead : MonoBehaviour {
 
-    // Access Arduino COM Port
-    SerialPort stream = new SerialPort("COM4", 9600); //Set the port (com4) and the baud rate (9600, is standard on most devices);
+    public static SerialPort serialPort = new SerialPort("COM3", 38400, Parity.None, 8, StopBits.One);
+    public static string strIn;
 
-    // Use this for Initialization
-    void Start () {
-        stream.Open(); //Open the Serial Stream.
-        stream.ReadTimeout = 1;
-        //print("started");
+    void Start()
+    {
+        OpenConnection();
     }
-	
-	// Update is called once per frame
-	void Update () {
-        if (stream.IsOpen)
-        {
-            try
-            {
-                SetAutonomyMode(stream.ReadByte());
-            }
-            catch(System.Exception)
-            {
 
+    void FixedUpdate()
+    {
+        Debug.Log(serialPort.ReadLine());
+    }
+
+    public void OpenConnection()
+    {
+        if (serialPort != null)
+        {
+            if (serialPort.IsOpen)
+            {
+                serialPort.Close();
+                Debug.Log("Closing port, because it was already open!");
+            }
+            else
+            {
+                serialPort.Open();
+                serialPort.ReadTimeout = 5000;
+                Debug.Log("Port Opened!");
             }
         }
         else
         {
-            //print("Serial Port Not Open");
+            if (serialPort.IsOpen)
+            {
+                print("Port is already open");
+            }
+            else
+            {
+                print("Port == null");
+            }
         }
     }
 
-    void SetAutonomyMode(int input)
+    void OnApplicationQuit()
     {
-        if (input == 100) // Focused
-        {
-            GameObject.Find("drone").GetComponent<droneMovement>().distracted = false;
-            //1:13 PM - 30 minutes (2/6)
-        }
-        else if (input == 115) // Distracted
-        {
-            GameObject.Find("drone").GetComponent<droneMovement>().distracted = true;
-        }
+        serialPort.Close();
+        Debug.Log("Port closed!");
     }
 }

@@ -26,11 +26,6 @@ public class runPrimaryTrial : MonoBehaviour
     float time;
     bool logged = false;
 
-    // Autonomy
-    public bool distracted;
-    // Discrete: Autonomy == 0  Continuous: Autonomy == 1
-    public bool continuous;
-
     void Start()
     {
         // Grab SUBID and Trial Number
@@ -43,23 +38,6 @@ public class runPrimaryTrial : MonoBehaviour
         identified = 0;
 
         xPos = GameObject.Find("Drone_red").transform.position.x;
-
-        // Get Autonomy Condition
-        int condition = PlayerPrefs.GetInt("Autonomy");
-        if (trial_number == 1)
-        {
-            if (condition % 2 == 0)
-                continuous = false;
-            else
-                continuous = true;
-        }
-        if (trial_number == 2)
-        {
-            if (condition % 2 == 0)
-                continuous = true;
-            else
-                continuous = false;
-        }
 
     }
 

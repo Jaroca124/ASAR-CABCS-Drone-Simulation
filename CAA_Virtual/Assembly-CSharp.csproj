@@ -91,12 +91,10 @@
      <Compile Include="Assets\DroneController\Standard Assets\Effects\ImageEffects\Scripts\Vortex.cs" />
      <Compile Include="Assets\Scripts\Break\waitScript.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\DisplayScript.cs" />
      <Compile Include="Assets\Scripts\Load.cs" />
      <Compile Include="Assets\Scripts\Menu\LoadSceneOnClick.cs" />
      <Compile Include="Assets\Scripts\Primary Task\changeTarget.cs" />
      <Compile Include="Assets\Scripts\Primary Task\runPrimaryTrial.cs" />
-     <Compile Include="Assets\Scripts\droneMovement.cs" />
      <Compile Include="Assets\Scripts\secondaryTaskScript.cs" />
      <Compile Include="Assets\Scripts\serialRead.cs" />
      <Compile Include="Assets\Scripts\setGame.cs" />

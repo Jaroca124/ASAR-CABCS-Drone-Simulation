@@ -40,8 +40,8 @@ public class changeTarget : MonoBehaviour {
                 target.sprite = orderA[0];
         }
 
-        GameObject GameController = GameObject.Find("GameController");
-        runPrimaryTrial primaryScript = GameController.GetComponent<runPrimaryTrial>();
+        GameObject GameController = GameObject.Find("Drone_red");
+        DroneMovementScript primaryScript = GameController.GetComponent<DroneMovementScript>();
         if (primaryScript.continuous)
         {
             condition.text = "Continuous";

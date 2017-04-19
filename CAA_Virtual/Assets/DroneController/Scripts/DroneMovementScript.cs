@@ -10,14 +10,38 @@ public class DroneMovementScript: MonoBehaviour{
 	AudioSource droneSound;
 	public  float velocity; //check for speed
 	public Transform droneObject;
-	//private float yVelocity;
-	//private float currentVelocityToSlowDown;
+    bool velocitySet;
+    //private float yVelocity;
+    //private float currentVelocityToSlowDown;
+
+    // Autonomy
+    public bool distracted;
+    // Discrete: Autonomy == 0  Continuous: Autonomy == 1
+    public bool continuous;
 
 	void Start(){
-		//animatedGameObject = droneObject.GetComponent<Animator>();
-	//	Input.gyro.enabled = true;
-	//	StartCoroutine("Up_Hover", 2.5f);
-	}
+        //animatedGameObject = droneObject.GetComponent<Animator>();
+        //	Input.gyro.enabled = true;
+        //	StartCoroutine("Up_Hover", 2.5f);
+
+        // Get Autonomy Condition
+        int condition = PlayerPrefs.GetInt("Autonomy");
+        int trial_number = PlayerPrefs.GetInt("Trial");
+        if (trial_number == 1)
+        {
+            if (condition % 2 == 0)
+                continuous = false;
+            else
+                continuous = true;
+        }
+        if (trial_number == 2)
+        {
+            if (condition % 2 == 0)
+                continuous = true;
+            else
+                continuous = false;
+        }
+    }
 
 	void Awake(){
 		ourDrone = GetComponent<Rigidbody>();
@@ -28,6 +52,7 @@ public class DroneMovementScript: MonoBehaviour{
 			print("No Sound Child GameObject ->" + ex.StackTrace.ToString());
 		}
 	}
+
 	void FixedUpdate(){
 		velocity = ourDrone.velocity.magnitude;		
 		ClampingSpeedValues();
@@ -35,10 +60,19 @@ public class DroneMovementScript: MonoBehaviour{
 		MovementForward();
 		DroneSound();
 
-        //Create Function to Keep Drone Centered
+        // Handle Drone Velocity if Distracted
+        if (distracted)
+        {
+            Distracted(ourDrone.velocity.z);
+        }
+        else
+        {
+            velocitySet = false;
+        }
+        
+        //Function to Keep Drone Centered
         PositionCheck();
         
-
 		if(joystick_turned_on == false){
 			Input_Mobile_Sensitvity_Calculation();
 		}
@@ -64,6 +98,42 @@ public class DroneMovementScript: MonoBehaviour{
 			new Vector3(tiltAmountForward, 90, tiltAmountSideways)
 		);
 	}
+
+    float vel;
+    void Distracted(float velocityWhenCalled) {
+        
+        if (!velocitySet)
+        {
+            vel = velocityWhenCalled;
+            velocitySet = true;
+        }
+
+        if (continuous)
+        {
+            if (Mathf.Abs(vel) > 0.5) {
+                ourDrone.velocity = Vector3.SmoothDamp(ourDrone.velocity, Vector3.zero, ref velocityToSmoothDampToZero, slowDownTime);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, -1 * 20 * vel, ref tiltVelocityForward, tiltMovementSpeed);
+            }
+            else
+            {
+                ourDrone.AddRelativeForce(Vector3.forward * 0 * movementForwardSpeed);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 0, ref tiltVelocityForward, tiltNoMovementSpeed);
+            }
+        }
+        else
+        {
+            if (Mathf.Abs(vel) > 0.5)
+            {
+                ourDrone.AddRelativeForce(Vector3.forward * -1 * vel * movementForwardSpeed);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, -1 * 20 * vel, ref tiltVelocityForward, tiltMovementSpeed);
+            }
+            else
+            {
+                ourDrone.AddRelativeForce(Vector3.forward * 0 * movementForwardSpeed);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 0, ref tiltVelocityForward, tiltNoMovementSpeed);
+            }
+        }
+    }
 
     void PositionCheck()
     {
@@ -283,21 +353,26 @@ public class DroneMovementScript: MonoBehaviour{
 	public float tiltNoMovementSpeed = 0.3f;
 	private void MovementForward(){
 
-		if(W){
-			ourDrone.AddRelativeForce(Vector3.forward * Vertical_W * movementForwardSpeed);
-			tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 20 * Vertical_W, ref tiltVelocityForward, tiltMovementSpeed);
-		}
-		if(S){
-			ourDrone.AddRelativeForce(Vector3.forward * Vertical_S * movementForwardSpeed);
-			tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 20 * Vertical_S, ref tiltVelocityForward, tiltMovementSpeed);
-		}
+        if (!distracted)
+        {
+            if (W)
+            {
+                ourDrone.AddRelativeForce(Vector3.forward * Vertical_W * movementForwardSpeed);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 20 * Vertical_W, ref tiltVelocityForward, tiltMovementSpeed);
+            }
+            if (S)
+            {
+                ourDrone.AddRelativeForce(Vector3.forward * Vertical_S * movementForwardSpeed);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 20 * Vertical_S, ref tiltVelocityForward, tiltMovementSpeed);
+            }
+        }
+        if (!W && !S)
+        {
+            tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 0, ref tiltVelocityForward, tiltNoMovementSpeed);
 
-		if(!W && !S){
-			tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 0, ref tiltVelocityForward, tiltNoMovementSpeed);
-
-		}
-
+        }
 	}
+
 	private void Input_Mobile_Sensitvity_Calculation(){
 		if(W == true){
 			Vertical_W = Mathf.LerpUnclamped(Vertical_W,1, Time.deltaTime * 10);
