@@ -8,7 +8,7 @@ public class DroneMovementScript: MonoBehaviour{
 	public bool joystick_turned_on = false;
 	Rigidbody ourDrone;
 	AudioSource droneSound;
-	public  float velocity; //check for speed
+	public float velocity; //check for speed
 	public Transform droneObject;
     bool velocitySet;
     //private float yVelocity;
@@ -63,7 +63,7 @@ public class DroneMovementScript: MonoBehaviour{
         // Handle Drone Velocity if Distracted
         if (distracted)
         {
-            Distracted(ourDrone.velocity.z);
+            Distracted(ourDrone.velocity.x, Input.GetAxisRaw("Vertical"));
         }
         else
         {
@@ -100,11 +100,13 @@ public class DroneMovementScript: MonoBehaviour{
 	}
 
     float vel;
-    void Distracted(float velocityWhenCalled) {
+    float vert;
+    void Distracted(float velocityWhenCalled, float inputWhenCalled) {
         
         if (!velocitySet)
         {
             vel = velocityWhenCalled;
+            vert = inputWhenCalled;
             velocitySet = true;
         }
 
@@ -122,16 +124,8 @@ public class DroneMovementScript: MonoBehaviour{
         }
         else
         {
-            if (Mathf.Abs(vel) > 0.5)
-            {
-                ourDrone.AddRelativeForce(Vector3.forward * -1 * vel * movementForwardSpeed);
-                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, -1 * 20 * vel, ref tiltVelocityForward, tiltMovementSpeed);
-            }
-            else
-            {
-                ourDrone.AddRelativeForce(Vector3.forward * 0 * movementForwardSpeed);
-                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 0, ref tiltVelocityForward, tiltNoMovementSpeed);
-            }
+            ourDrone.AddRelativeForce(Vector3.forward * vert * movementForwardSpeed);
+            tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 20 * vert, ref tiltVelocityForward, tiltMovementSpeed);
         }
     }
 
