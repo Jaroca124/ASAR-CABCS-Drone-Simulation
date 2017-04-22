@@ -20,6 +20,7 @@ public class runPrimaryTrial : MonoBehaviour
 
     // Targets
     int identified;
+    public Sprite[] targets;
 
     // Time
     float TOC;
@@ -28,6 +29,7 @@ public class runPrimaryTrial : MonoBehaviour
 
     void Start()
     {
+        load_targets();
         // Grab SUBID and Trial Number
         SUBID = PlayerPrefs.GetInt("SUBID");
         Debug.Log("SUBID: " + SUBID);
@@ -50,7 +52,7 @@ public class runPrimaryTrial : MonoBehaviour
             identified++;
         }
 
-        if (Time.time > 10.0f && (xPos > -5.0 && xPos < 5.0f) && identified > 5)
+        if (Time.time > 10.0f && (xPos > -5.0 && xPos < 5.0f) && identified > 4)
         {
             if (!logged)
             {
@@ -58,6 +60,15 @@ public class runPrimaryTrial : MonoBehaviour
                 logged = true;
             }
         }
+    }
+
+    void load_targets()
+    {
+        GameObject.Find("target_1").GetComponent<SpriteRenderer>().sprite = targets[Random.Range(0, 5)];
+        GameObject.Find("target_2").GetComponent<SpriteRenderer>().sprite = targets[Random.Range(0, 5)];
+        GameObject.Find("target_3").GetComponent<SpriteRenderer>().sprite = targets[Random.Range(0, 5)];
+        GameObject.Find("target_4").GetComponent<SpriteRenderer>().sprite = targets[Random.Range(0, 5)];
+        GameObject.Find("target_5").GetComponent<SpriteRenderer>().sprite = targets[Random.Range(0, 5)];
     }
 
     void log_data()

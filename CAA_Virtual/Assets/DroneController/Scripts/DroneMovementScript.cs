@@ -1,5 +1,7 @@
 using UnityEngine;
 using System.Collections;
+using System.IO;
+
 public class DroneMovementScript: MonoBehaviour{
 	[HideInInspector]//used for idle animations 
 	public bool idle = true;
@@ -19,7 +21,9 @@ public class DroneMovementScript: MonoBehaviour{
     // Discrete: Autonomy == 0  Continuous: Autonomy == 1
     public bool continuous;
 
-	void Start(){
+    TextWriter flightData;
+
+    void Start(){
         //animatedGameObject = droneObject.GetComponent<Animator>();
         //	Input.gyro.enabled = true;
         //	StartCoroutine("Up_Hover", 2.5f);
@@ -45,7 +49,12 @@ public class DroneMovementScript: MonoBehaviour{
 
 	void Awake(){
 		ourDrone = GetComponent<Rigidbody>();
-		try{
+
+        // Define Log Files
+        flightData = new StreamWriter(@"C:\Users\Jake\Documents\GitHub\CAA_Virtual\CAA_Virtual\Assets\Data\flightData.txt");
+
+        try
+        {
 			droneSound = gameObject.transform.FindChild("drone_sound").GetComponent<AudioSource>();
 		}
 		catch(System.Exception ex){
@@ -54,7 +63,10 @@ public class DroneMovementScript: MonoBehaviour{
 	}
 
 	void FixedUpdate(){
-		velocity = ourDrone.velocity.magnitude;		
+        //Log Data
+        flightData.WriteLine(ourDrone.velocity.magnitude + " " + Input.GetAxisRaw("Vertical") + " " + ourDrone.position.x + " " + distracted + " " + Time.timeSinceLevelLoad);
+
+        velocity = ourDrone.velocity.magnitude;
 		ClampingSpeedValues();
 		MovementUpDown();
 		MovementForward();
@@ -114,7 +126,7 @@ public class DroneMovementScript: MonoBehaviour{
         {
             if (Mathf.Abs(vel) > 0.5) {
                 ourDrone.velocity = Vector3.SmoothDamp(ourDrone.velocity, Vector3.zero, ref velocityToSmoothDampToZero, slowDownTime);
-                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, -1 * 20 * vel, ref tiltVelocityForward, tiltMovementSpeed);
+                tiltAmountForward = Mathf.SmoothDamp(tiltAmountForward, 0, ref tiltVelocityForward, tiltMovementSpeed);
             }
             else
             {
@@ -135,6 +147,11 @@ public class DroneMovementScript: MonoBehaviour{
         if (ourDrone.transform.position.z > 155 || ourDrone.transform.position.z < 153.4)
         {
             ourDrone.AddRelativeForce((300.0f * -1.0f * (Mathf.Sign(153.5f - (ourDrone.transform.position.z)))), 0,0);
+        }
+
+        if (ourDrone.transform.position.x < -10.00)
+        {
+            ourDrone.velocity = Vector3.zero;
         }
     }
 
