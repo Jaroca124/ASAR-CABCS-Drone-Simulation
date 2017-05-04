@@ -11,9 +11,12 @@ public class changeTarget : MonoBehaviour {
     public Text condition;
 
     Image target;
-    int targetNum = 0;
+    public int targetNum = 0;
     int order;
     int trial;
+    public char targetORDER = 'a';
+
+    runPrimaryTrial runPrimaryTrial;
 
     // Use this for initialization
     void Start()
@@ -28,20 +31,36 @@ public class changeTarget : MonoBehaviour {
         if (trial == 1)
         {
             if (order % 2 == 0)
+            {
                 target.sprite = orderA[0];
+                targetORDER = 'a';
+            }
             else
+            {
                 target.sprite = orderB[0];
+                targetORDER = 'b';
+            }
         }
         if (trial == 2)
         {
             if (order % 2 == 0)
+            {
                 target.sprite = orderB[0];
+                targetORDER = 'b';
+            }
             else
+            {
                 target.sprite = orderA[0];
+                targetORDER = 'a';
+            }
         }
 
         GameObject GameController = GameObject.Find("Drone_red");
         DroneMovementScript primaryScript = GameController.GetComponent<DroneMovementScript>();
+
+        GameObject starting = GameObject.Find("GameController");
+        runPrimaryTrial = starting.GetComponent<runPrimaryTrial>();
+
         if (primaryScript.continuous)
         {
             condition.text = "Continuous";
@@ -57,9 +76,8 @@ public class changeTarget : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-
         // Use Trial Number to Decide Order
-        if (Input.GetButtonDown("BButton"))
+        if (runPrimaryTrial.START && Input.GetButtonDown("BButton"))
         {
             if (targetNum < 6)
             {

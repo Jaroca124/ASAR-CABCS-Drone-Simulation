@@ -12,6 +12,7 @@ public class runPrimaryTrial : MonoBehaviour
     // Declare Subid
     static int SUBID;
     int trial_number;
+    public bool START;
 
     // Declare Trigger Times
     // Based on Total Distance Travelled
@@ -25,7 +26,9 @@ public class runPrimaryTrial : MonoBehaviour
     // Time
     float TOC;
     float time;
+    float start;
     bool logged = false;
+    public Text startText;
 
     void Start()
     {
@@ -36,23 +39,29 @@ public class runPrimaryTrial : MonoBehaviour
         trial_number = PlayerPrefs.GetInt("Trial");
         Debug.Log("Starting Trial " + trial_number);
 
-        time = Time.time;
         identified = 0;
 
         xPos = GameObject.Find("Drone_red").transform.position.x;
-
+        START = false;
     }
 
     void Update()
     {
+        if (!START && Input.GetButtonDown("YButton"))
+        {
+            start = Time.time;
+            startText.enabled = false;
+            START = true;
+        }
+
         xPos = GameObject.Find("Drone_red").transform.position.x;
 
-        if (Input.GetButtonDown("BButton"))
+        if (START && Input.GetButtonDown("BButton"))
         {
             identified++;
         }
 
-        if (Time.time > 10.0f && (xPos > -5.0 && xPos < 5.0f) && identified > 4)
+        if (START && Time.time > 10.0f && (xPos > -5.0 && xPos < 5.0f) && identified > 4)
         {
             if (!logged)
             {
@@ -60,6 +69,7 @@ public class runPrimaryTrial : MonoBehaviour
                 logged = true;
             }
         }
+
     }
 
     void load_targets()
@@ -73,7 +83,7 @@ public class runPrimaryTrial : MonoBehaviour
 
     void log_data()
     {
-        TOC = Time.time - time;
+        TOC = Time.time - start;
         Debug.Log("Trial " + trial_number + " Time: " + TOC);
         if (trial_number == 1) {
             PlayerPrefs.SetFloat("Trial1Time", TOC);

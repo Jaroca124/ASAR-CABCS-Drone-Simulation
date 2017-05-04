@@ -10,6 +10,9 @@ public class CameraController : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
+
+
+
         currentCameraIndex = 0;
 
         //Turn all cameras off, except the first default one

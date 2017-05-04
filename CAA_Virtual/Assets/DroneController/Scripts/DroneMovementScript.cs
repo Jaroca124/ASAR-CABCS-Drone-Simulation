@@ -13,6 +13,7 @@ public class DroneMovementScript: MonoBehaviour{
 	public float velocity; //check for speed
 	public Transform droneObject;
     bool velocitySet;
+    public AudioSource alert;
     //private float yVelocity;
     //private float currentVelocityToSlowDown;
 
@@ -20,6 +21,8 @@ public class DroneMovementScript: MonoBehaviour{
     public bool distracted;
     // Discrete: Autonomy == 0  Continuous: Autonomy == 1
     public bool continuous;
+
+    runPrimaryTrial runPrimaryTrial;
 
     TextWriter flightData;
 
@@ -45,6 +48,11 @@ public class DroneMovementScript: MonoBehaviour{
             else
                 continuous = false;
         }
+
+        GameObject starting = GameObject.Find("GameController");
+        runPrimaryTrial = starting.GetComponent<runPrimaryTrial>();
+
+        alert = GetComponent<AudioSource>();
     }
 
 	void Awake(){
@@ -71,6 +79,7 @@ public class DroneMovementScript: MonoBehaviour{
 		MovementUpDown();
 		MovementForward();
 		DroneSound();
+        TriggerDistraction();
 
         // Handle Drone Velocity if Distracted
         if (distracted)
@@ -110,6 +119,48 @@ public class DroneMovementScript: MonoBehaviour{
 			new Vector3(tiltAmountForward, 90, tiltAmountSideways)
 		);
 	}
+
+    void TriggerDistraction()
+    {
+        GameObject Target = GameObject.Find("Target");
+        changeTarget targetScript = Target.GetComponent<changeTarget>();
+
+        Debug.Log(targetScript.targetORDER);
+        Debug.Log(targetScript.targetNum);
+
+        if (targetScript.targetORDER == 'a')
+        {
+            if (targetScript.targetNum == 1 && ourDrone.position.x >= 10)
+            {
+                Debug.Log("Now");
+            }
+            if (targetScript.targetNum == 4 && ourDrone.position.x >= 20)
+            {
+                alert.Play();
+            }
+            if (targetScript.targetNum == 5 && ourDrone.position.x >= 40)
+            {
+                alert.Play();
+            }
+        }
+
+        if (targetScript.targetORDER == 'b')
+        {
+            if (targetScript.targetNum == 1 && ourDrone.position.x >= 30)
+            {
+                alert.Play(); 
+            }
+            if (targetScript.targetNum == 4 && ourDrone.position.x <= 30)
+            {
+                alert.Play();
+            }
+            if (targetScript.targetNum == 5 && ourDrone.position.x >= 10)
+            {
+                alert.Play();
+            }
+        }
+
+    }
 
     float vel;
     float vert;
@@ -226,23 +277,25 @@ public class DroneMovementScript: MonoBehaviour{
 	[Range(0.0f,2.0f)]
 	public float slowDownTime = 0.95f;
 	private void ClampingSpeedValues(){
-		if((W || S) && (A || D)){
-		//if(Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f){
-			ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.Lerp(ourDrone.velocity.magnitude, maxForwardSpeed, Time.deltaTime * 5f));
-		}
-		if((W || S) && (!A && !D)){
-		//if(Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) < 0.2f){
-			ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.Lerp(ourDrone.velocity.magnitude, maxForwardSpeed, Time.deltaTime * 5f));
-		}
-		if((!W && !S) && (A || D)){
-		//if(Mathf.Abs(Input.GetAxis("Vertical")) < 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f){
-			ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.Lerp(ourDrone.velocity.magnitude, maxSidewaySpeed, Time.deltaTime * 5f));
-		}
-		if(!W && !S && !A && !D){
-		//if(Mathf.Abs(Input.GetAxis("Vertical")) < 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) < 0.2f){
-			//ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.SmoothDamp(ourDrone.veloc/ity.magnitude,0.0f, ref currentVelocityToSlowDown,0.5f));
-			ourDrone.velocity = Vector3.SmoothDamp(ourDrone.velocity, Vector3.zero, ref velocityToSmoothDampToZero, slowDownTime);
-		}
+            if ((W || S) && (A || D) && runPrimaryTrial.START)
+        {
+		    //if(Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f){
+			    ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.Lerp(ourDrone.velocity.magnitude, maxForwardSpeed, Time.deltaTime * 5f));
+		    }
+		    if((W || S) && (!A && !D) && runPrimaryTrial.START)
+        {
+		    //if(Mathf.Abs(Input.GetAxis("Vertical")) > 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) < 0.2f){
+			    ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.Lerp(ourDrone.velocity.magnitude, maxForwardSpeed, Time.deltaTime * 5f));
+		    }
+		    if((!W && !S) && (A || D)){
+		    //if(Mathf.Abs(Input.GetAxis("Vertical")) < 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) > 0.2f){
+			    ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.Lerp(ourDrone.velocity.magnitude, maxSidewaySpeed, Time.deltaTime * 5f));
+		    }
+		    if(!W && !S && !A && !D){
+		    //if(Mathf.Abs(Input.GetAxis("Vertical")) < 0.2f && Mathf.Abs(Input.GetAxis("Horizontal")) < 0.2f){
+			    //ourDrone.velocity = Vector3.ClampMagnitude(ourDrone.velocity, Mathf.SmoothDamp(ourDrone.veloc/ity.magnitude,0.0f, ref currentVelocityToSlowDown,0.5f));
+			    ourDrone.velocity = Vector3.SmoothDamp(ourDrone.velocity, Vector3.zero, ref velocityToSmoothDampToZero, slowDownTime);
+		    }
 	}
 
 	private void DroneSound(){
@@ -364,7 +417,7 @@ public class DroneMovementScript: MonoBehaviour{
 	public float tiltNoMovementSpeed = 0.3f;
 	private void MovementForward(){
 
-        if (!distracted)
+        if (runPrimaryTrial.START && !distracted)
         {
             if (W)
             {
